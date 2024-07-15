@@ -1,0 +1,411 @@
+selectall;
+
+delete;
+
+theta_wv = 0 * pi/180;
+
+theta_coupling = 15 * pi/180;
+
+width_ring = 1.6e-6;
+
+radius_ring = 80e-6;
+
+gap = 100e-9;
+
+wv_width = 1.6e-6;
+
+wv_height = 0.1e-6;
+
+#wv_top_width = wv_width - 2*wv_height*cos(theta_wv)/sin(theta_wv);
+
+wv_base_width = 5e-6;
+
+wv_base_height = 0.01e-6;
+
+length_x = 200e-6;
+
+radius_coupling = radius_ring + width_ring + gap;
+
+r1 = 3*radius_coupling/10;
+
+theta_st = pi-theta_coupling/2;
+
+theta_end = pi+theta_coupling/2;
+
+y_ring = -(radius_coupling)*cos(theta_coupling/2);
+
+y1 = (radius_ring + width_ring/2 + gap)*cos(theta_coupling/2)+wv_width/2;
+
+x1 = abs(radius_coupling*sin(theta_end)-2e-6);
+
+x2 = length_x/2;
+
+x3 = -(radius_coupling + r1)*sin(theta_coupling/2);
+
+y3 = -(radius_coupling + r1)*cos(theta_coupling/2);
+
+mat1 = "AlGaAs x = 0.148";
+
+mat2 = "AlGaAs x = 0.4";
+
+mat3 = "SiO2 (Glass) - Palik";
+
+
+
+### Straight Waveguides
+
+
+
+#addwaveguide;
+
+#set('Base Width', wv_width);
+
+#set('Base Height', wv_height);
+
+#set('Base Angle', 90-180*theta_wv/pi);
+
+#set('x', 0);
+
+#set('y', 0);
+
+#set('z', wv_height/2);
+
+#V1 = [-x1,-y1];
+
+#V2 = [-x2,-y1];
+
+#V = [V1;V2];
+
+#set('poles',V);
+
+
+
+#addwaveguide;
+
+#set('Base Width', wv_width);
+
+#set('Base Height', wv_height);
+
+#set('Base Angle', 90-180*theta_wv/pi);
+
+#set('x', 0);
+
+#set('y', 0);
+
+#set('z', wv_height/2);
+
+#V1 = [x1,-y1];
+
+#V2 = [x2,-y1];
+
+#V = [V1;V2];
+
+#set('poles',V);
+
+
+
+
+
+### Curved Waveguide
+
+addwaveguide;
+
+set('Base Width', wv_width);
+
+set('Base Height', wv_height);
+
+set('Base Angle', 90-180*theta_wv/pi);
+
+set('x', 0);
+
+set('y', 0);
+
+set('z', wv_height/2);
+
+t = linspace(theta_st, theta_end, 100);
+
+#V1 = [radius_coupling*sin(theta_st)+2e-6, -y1];
+
+#V2 = [radius_coupling*sin(theta_st)+0.5e-6, -y1];
+
+V3 = [radius_coupling*sin(t),radius_coupling*cos(t)];
+
+#V4 = [radius_coupling*sin(theta_end)-0.5e-6, -y1];
+
+#V5 = [radius_coupling*sin(theta_end)-2e-6, -y1];
+
+#V = [V1;V2;V3;V4;V5];
+
+set('poles',V3);
+
+
+
+addwaveguide;
+
+set('Base Width', wv_width);
+
+set('Base Height', wv_height);
+
+set('Base Angle', 90-180*theta_wv/pi);
+
+set('x', x3);
+
+set('y', y3);
+
+set('z', wv_height/2);
+
+V1 = [-length_x/2-x3, r1];
+
+t = linspace(0, theta_coupling/2, 100);
+
+V3 = [r1*sin(t),r1*cos(t)];
+
+V = [V1;V3];
+
+set('poles',V);
+
+
+
+addwaveguide;
+
+set('Base Width', wv_width);
+
+set('Base Height', wv_height);
+
+set('Base Angle', 90-180*theta_wv/pi);
+
+set('x', -x3);
+
+set('y', y3);
+
+set('z', wv_height/2);
+
+V1 = [length_x/2+x3, r1];
+
+t = linspace(-theta_coupling/2, 0, 100);
+
+V3 = [r1*sin(t),r1*cos(t)];
+
+V = [V3;V1];
+
+set('poles',V);
+
+
+
+
+
+#Ring
+addring;
+set('x', 0);
+
+set('y', 0);
+
+set('z', wv_height/2);
+set('z span', wv_height);
+
+set('inner radius', radius_ring - width_ring/2);
+set('outer radius', radius_ring + width_ring/2);
+
+addwaveguide;
+
+set('Base Width', width_ring);
+
+set('Base Height', wv_height);
+
+set('Base Angle', 90-theta_wv);
+
+set('x', 0);
+
+set('y', 0);
+
+set('z', wv_height/2);
+
+V1 = [radius_ring, 0.005e-6];
+
+t = linspace(pi/2, 3*pi/2, 100);
+
+V2 = [radius_ring*sin(t),radius_ring*cos(t)];
+
+V3= [-radius_ring, 0.005e-6];
+
+V = [V1;V2;V3];
+
+set('poles',V);
+
+
+
+addwaveguide;
+
+set('Base Width', width_ring);
+
+set('Base Height', wv_height);
+
+set('Base Angle', 90-theta_wv);
+
+set('x', 0);
+
+set('y', 0.01e-6);
+
+set('z', wv_height/2);
+
+V1 = [-radius_ring, -0.005e-6];
+
+t = linspace(3*pi/2, 5*pi/2, 100);
+
+V2 = [radius_ring*sin(t),radius_ring*cos(t)];
+
+V3= [radius_ring, -0.005e-6];
+
+V = [V1;V2;V3];
+
+set('poles',V);
+
+
+
+
+
+addrect;
+
+set('x', 0);
+
+set('x span', length_x+20e-6);
+
+set('y', 0);
+
+set('y span', length_x+20e-6);
+
+set('z', -wv_base_height/2);
+
+set('z span', wv_base_height);
+
+
+
+selectall;
+
+set('material', mat1);
+
+
+addrect;
+
+set('x', 0);
+
+set('x span', length_x+20e-6);
+
+set('y', 0);
+
+set('y span', length_x+20e-6);
+
+set('z max', -wv_base_height);
+
+set('z min', -100e-6);
+
+set('material', mat3);
+
+set('override mesh order from material database', 1);
+
+set('mesh order', 3);
+
+
+addrect;
+
+set('x', 0);
+
+set('x span', length_x+20e-6);
+
+set('y', 0);
+
+set('y span', length_x+20e-6);
+
+set('z min', 0);
+
+set('z max', 100e-6);
+
+set('material', mat3);
+
+set('override mesh order from material database', 1);
+
+set('mesh order', 3);
+
+
+addvarfdtd;
+
+set('x', 0);
+
+set('x span', 2*radius_ring + 7.5e-6);
+
+set('y', 0);
+
+set('y span', 2*radius_ring + 7.5e-6);
+
+set('z', wv_height/2);
+
+set('z span', 0.4e-6);
+
+set('set simulation bandwidth', 1);
+centre = 1550e-9;
+span = 50e-09;
+#set('min', center-span);
+
+#set('max', center+span);
+
+
+
+addplane;
+
+set('injection axis', 1);
+
+set('x', -40e-6);
+
+set('y', y3+r1);
+
+set('y span', 3e-6);
+
+#set('wavelength start', center-span);
+
+#set('wavelength stop', center+span);
+
+
+addpower;
+
+set('monitor type', 5);
+
+set('x', 30e-6);
+
+set('y', y3+r1);
+
+set('y span', 2*wv_width);
+
+set('z', wv_height/2);
+
+set('z span', 2*wv_height);
+
+
+addpower;
+
+set('monitor type', 5);
+
+set('x', -30e-6);
+
+set('y', y3+r1);
+
+set('y span', 2*wv_width);
+
+set('z', wv_height/2);
+
+set('z span', 2*wv_height);
+
+
+
+addpower;
+
+set('monitor type', 7);
+
+set('x', 0);
+
+set('x span', 2*radius_ring + 5e-6);
+
+set('y', 0);
+
+set('y span', 2*radius_ring + 5e-6);
+
+set('z', wv_height/2);
